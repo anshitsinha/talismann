@@ -21,3 +21,35 @@ function updateActiveSliderNumber(markerMove, markerMaxMove) {
     currentPart = Math.min(10, currentPart);
     activeSlide.textContent = `${currentPart}/10`;
 }
+
+function update() {
+    current = lerp(current, target, ease);
+
+    gsap.set(".slider-wrapper", {
+        x: -current,
+    });
+
+    let moveRatio = current / maxScroll;
+
+    let markerMaxMove = window.innerWidth - markerWrapper.offsetWidth - 170;
+    let markerMove = 70 + moveRatio * markerMaxMove;
+    gsap.set(".marker-wrapper", {
+        x: markerMove,
+    });
+
+    updateActiveSliderNumber(markerMove, markerMaxMove);
+
+    requestAnimationFrame(update);
+}
+
+window.addEventListener("resize", () => {
+    maxScroll = sliderWrapper.offsetWidth - window.innerWidth;
+});
+
+window.addEventListener("wheel", (e) => {
+    target += e.deltaY;
+    target = Math.max(0, target);
+    target = Math.min(maxScroll, target);
+});
+
+update();
